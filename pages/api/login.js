@@ -6,8 +6,9 @@ const handler = (req, res) => {
         const { username, password } = req.body;
         if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
             res.setHeader("Set-Cookie", cookie.serialize("token", process.env.TOKEN, {
-                sameSite: "strict",
+                httpOnly:true,
                 secure:true,
+                sameSite: "strict",
                 maxAge: 60 * 60,
                 path: '/'
             }))
