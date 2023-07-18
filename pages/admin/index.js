@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "../../styles/admin.module.css";
 import AddButton from "../../components/AddButton";
 import Add from "../../components/Add";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Index = ({ orders, products }) => {
     const [pizzaList, setPizzaList] = useState(products);
@@ -12,10 +13,9 @@ const Index = ({ orders, products }) => {
     const status = ["preparing", "on the way", "delivered"];
 
     const handleDelete = async (id) => {
-        console.log(id);
         try {
             const res = await axios.delete(
-                "http://localhost:3000/api/products/" + id
+                `${BASE_URL}/api/products/` + id
             );
             setPizzaList(pizzaList.filter((pizza) => pizza._id !== id));
         } catch (err) {
@@ -26,9 +26,10 @@ const Index = ({ orders, products }) => {
     const handleStatus = async (id) => {
         const item = orderList.filter((order) => order._id === id)[0];
         const currentStatus = item.status;
+        if (currentStatus == 2) return;
 
         try {
-            const res = await axios.put("http://localhost:3000/api/orders/" + id, {
+            const res = await axios.put(`${BASE_URL}/api/orders/` + id, {
                 status: currentStatus + 1,
             });
             setOrderList([
@@ -132,9 +133,8 @@ export const getServerSideProps = async (ctx) => {
             },
         };
     }
-
-    const productRes = await axios.get("http://localhost:3000/api/products");
-    const orderRes = await axios.get("http://localhost:3000/api/orders");
+    const productRes = await axios.get(`${BASE_URL}/api/products/`);
+    const orderRes = await axios.get(`${BASE_URL}/api/orders/`);
 
     return {
         props: {
